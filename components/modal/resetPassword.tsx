@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import {Label, TextInput, Button, Spinner} from 'flowbite-react'
 import { useSendPasswordResetEmail } from 'react-firebase-hooks/auth';
 import { auth } from '@/firebase/firebaseConfig';
+import { FIREBASE_ERRORS } from '@/firebase/errors';
 
 type Props = {}
 
@@ -13,8 +14,11 @@ const ResetPassword = (props: Props) => {
       );
       const submitHandler = async (e : React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-       await sendPasswordResetEmail(email)
-       setSuccess(true)
+      const sendMail = await sendPasswordResetEmail(email)
+      if(sendMail){
+        setSuccess(true)
+      }
+      
       }
   return (
     <div>
@@ -41,7 +45,7 @@ const ResetPassword = (props: Props) => {
       onChange={(e) => setEmail(e.target.value)}
     />
   </div>
-   
+  {error && <p className="text-sm text-red-500">{FIREBASE_ERRORS[error?.message as keyof typeof FIREBASE_ERRORS]}</p>}
   <Button type="submit" className="uppercase !bg-[#ff4500]">
     {sending ? <Spinner aria-label="Left-aligned spinner example" /> : "RESET PASSWORD"}
   

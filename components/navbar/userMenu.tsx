@@ -1,10 +1,12 @@
-import { Avatar, Dropdown } from 'flowbite-react'
+import { Avatar, Dropdown, Spinner } from 'flowbite-react'
 import React from 'react'
-import {User, signOut} from 'firebase/auth'
+import {User} from 'firebase/auth'
 import { auth } from '@/firebase/firebaseConfig'
 import {FiLogIn} from 'react-icons/fi'
 import { useSetRecoilState } from 'recoil'
 import { AuthModalState } from '@/atoms/authModalAtoms'
+import { useSignOut } from 'react-firebase-hooks/auth'
+
 
 type Props = {
     user? : User | null
@@ -12,10 +14,11 @@ type Props = {
 
 const UserMenu = ({user}: Props) => {
   const setModalState = useSetRecoilState(AuthModalState)
+  const [signOut, loading, error] = useSignOut(auth);
   return (
    <>
    {user ? (
-    <div className="relative">
+    <div className="!relative">
        <Dropdown
      label={        
          <Avatar
@@ -23,7 +26,7 @@ const UserMenu = ({user}: Props) => {
          size="sm"
          status="online"
          statusPosition="bottom-right"
-         
+                  
        />
      }
      inline={true}    
@@ -46,8 +49,8 @@ const UserMenu = ({user}: Props) => {
        Earnings
      </Dropdown.Item>
      <Dropdown.Divider />
-     <Dropdown.Item onClick={() => signOut(auth)}>
-       Sign out
+     <Dropdown.Item onClick={() => signOut()}>
+       {loading ? <Spinner /> : "Sign out"}
      </Dropdown.Item>
    </Dropdown>
     </div>

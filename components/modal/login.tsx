@@ -29,9 +29,23 @@ const Login = (props: Props) => {
       [e.target.name] : e.target.value
     }))
   }
-  const SubmitHandler = (e : React.FormEvent<HTMLFormElement>) => {
+  const SubmitHandler = async (e : React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    signInWithEmailAndPassword( loginForm.email, loginForm.password);
+   const sucess = await signInWithEmailAndPassword( loginForm.email, loginForm.password);
+
+   if(sucess){
+       setModalState((prev) => ({
+      ...prev,
+      open : false
+    }))
+    setLoginForm(() => ({    
+      email : "",
+      password : ""
+    }) )
+   }
+    
+    
+   
   }
   return (
     <form className="flex flex-col gap-4" onSubmit={SubmitHandler}>

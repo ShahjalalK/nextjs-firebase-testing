@@ -34,7 +34,7 @@ const Signup = (props: Props) => {
       }))
   }
 
-  const SubmitHandler = (e : React.FormEvent<HTMLFormElement>) => {
+  const SubmitHandler = async (e : React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setError("")
     if(signupForm.password !== signupForm.confirmPassword){
@@ -42,11 +42,19 @@ const Signup = (props: Props) => {
       return;
     }
    
-    createUserWithEmailAndPassword(signupForm.email, signupForm.password)
-    setAuthModalState((prev) => ({
-      ...prev,
-      open : false
-    }))
+    const success = await createUserWithEmailAndPassword(signupForm.email, signupForm.password)
+
+    if(success){
+      setAuthModalState((prev) => ({
+        ...prev,
+        open : false
+      }))
+
+      signupForm.email = ""
+      signupForm.password = ""
+      signupForm.confirmPassword = ""
+    }
+    
   }
 
   return (
