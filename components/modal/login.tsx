@@ -1,81 +1,83 @@
-import React, { useState } from 'react'
-import {useSignInWithEmailAndPassword} from 'react-firebase-hooks/auth'
-import {auth} from '@/firebase/clientApp'
-import { FIREBASE_ERRORS } from '@/firebase/errors'
+import React, { ReactNode, useState } from 'react'
+import {Label, TextInput, Button, Spinner} from 'flowbite-react'
+import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth'
+import { auth } from '@/firebase/firebaseConfig'
+import { FIREBASE_ERRORS } from '../../firebase/errors'
+import { useSetRecoilState } from 'recoil'
+import { AuthModalState } from '@/atoms/authModalAtoms'
 
-type Props = {}
+
+type Props = {
+    
+}
 
 const Login = (props: Props) => {
-    const [loginForm, setLoginForm] = useState({
-        email : "",
-        password : "",
-    })
-    const [
-      signInWithEmailAndPassword,
-      user,
-      loading,
-      error,
-    ] = useSignInWithEmailAndPassword(auth);
-    const onSubmit = (e : React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        signInWithEmailAndPassword(loginForm.email, loginForm.password)
-        console.log(loginForm.email, loginForm.password)
-        console.log(auth)
-
-    }
-    const Onchange = (event : React.ChangeEvent<HTMLInputElement>) => {
-        setLoginForm((prev) => ({
-            ...prev,
-            [event.target.name] : event.target.value
-        }))
-    }
-    
+  const setModalState = useSetRecoilState(AuthModalState)
+  const [loginForm, setLoginForm] = useState({
+    email : "",
+    password : ""
+  })
+  const [
+    signInWithEmailAndPassword,
+    user,
+    loading,
+    userError,
+  ] = useSignInWithEmailAndPassword(auth);
+  const ChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLoginForm((prev) => ({
+      ...prev,
+      [e.target.name] : e.target.value
+    }))
+  }
+  const SubmitHandler = (e : React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    signInWithEmailAndPassword( loginForm.email, loginForm.password);
+  }
   return (
-    <form className="flex-grow w-full" onSubmit={onSubmit}>
- 
-  <div className="mb-6">
-    <label
-      htmlFor="email"
-      className="block mb-2 text-sm font-medium text-gray-900 dark:text-red-white"
-    >
-      Email address
-    </label>
-    <input
-    onChange={Onchange}
+    <form className="flex flex-col gap-4" onSubmit={SubmitHandler}>
+  <div>
+    <div className="mb-2 block">
+      <Label
+        htmlFor="email1"
+        value="Your email"
+      />
+    </div>
+    <TextInput
+      id="email1"
       type="email"
-      name='email'
-      id="email"
-      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 flex-grow"
-      placeholder="john.doe@company.com"
-      required
+      placeholder="name@yourmail.com"
+      required={true}
+      onChange={ChangeHandler}
+      name="email"
     />
   </div>
-  <div className="mb-6">
-    <label
-      htmlFor="password"
-      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-    >
-      Password
-    </label>
-    <input
-    onChange={Onchange}
+  <div>
+    <div className="mb-2 block">
+      <Label
+        htmlFor="password1"
+        value="Your password"
+      />
+    </div>
+    <TextInput
+    
+      id="password1"
       type="password"
-      id="password"
-      name='password'
-      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-      placeholder="•••••••••"
-      required
+      required={true}
+      onChange={ChangeHandler}
+      name="password"   
     />
   </div>
-   {error && <p className="text-red-500">{FIREBASE_ERRORS[error.message as keyof typeof FIREBASE_ERRORS]}</p>}
-  <button
-    type="submit"
-    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-  >
-    Login Your Account
-  </button>
+  {userError && <p className=" text-red-500">{FIREBASE_ERRORS[userError.message as keyof typeof FIREBASE_ERRORS]}</p>}
+  <Button type='submit' className=" !bg-[#ff4500]" >
+    {loading ? <Spinner aria-label="Left-aligned spinner example" /> : "Login your account"}
+  </Button>
+  <p className="text-sm text-center">Forgot your password ? <button className="text-blue-700" type='button' onClick={() => {
+    setModalState((prev) => ({
+      ...prev,
+      view : "resetPassword"
+    }))
+  }}>Reset</button></p>
 </form>
-
   )
 }
 

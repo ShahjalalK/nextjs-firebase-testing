@@ -1,14 +1,21 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [    
+    './pages/_app.tsx',
+
     './components/navbar/navbar.tsx',
-    './components/login.tsx',
-    './components/navbar/authButton.tsx',
+    './components/navbar/search.tsx',
+    './components/navbar/rightContnet.tsx',
+    './components/navbar/icons.tsx',
+    './components/navbar/userMenu.tsx',
+
+    './components/modal/authModal.tsx',
     './components/modal/login.tsx',
     './components/modal/signup.tsx',
-    './components/modal/authModalInputs.tsx',
-    './components/modal/authModal.tsx',
-    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/modal/signup.tsx',
+    './components/modal/resetPassword.tsx',
+    './components/modal/resetTitle.tsx',
+    
     'node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}'
   ],
   theme: {

@@ -1,17 +1,18 @@
 import type { AppProps } from "next/app";
 import "../styles/globals.css";
-import MetaSeo from "@/metaSeo/metaSeo";
-import Layout from "@/components/layout/layout";
+
 import { RecoilRoot } from "recoil";
+import Navbar from "@/components/navbar/navbar";
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
-      <MetaSeo title="Reddit App" />
+      
       <RecoilRoot>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
+       <main className=" font-body">
+       <Navbar />
+      <Component {...pageProps} />
+       </main>
       </RecoilRoot>
     </>
   );

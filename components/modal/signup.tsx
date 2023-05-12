@@ -1,110 +1,115 @@
-import React, { useState } from 'react'
-import {useCreateUserWithEmailAndPassword} from 'react-firebase-hooks/auth'
-import {FIREBASE_ERRORS} from '@/firebase/errors'
+import React, { ReactNode, useState } from 'react'
+import {Label, TextInput, Button, Spinner} from 'flowbite-react'
+import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth'
+import { auth } from '@/firebase/firebaseConfig'
+import { FIREBASE_ERRORS } from '@/firebase/errors'
+import { useSetRecoilState } from 'recoil'
+import { AuthModalState } from '@/atoms/authModalAtoms'
 
-import {auth} from '@/firebase/clientApp'
-import { Spinner } from 'flowbite-react'
+type Props = {
+    
+}
 
-type Props = {}
+
+
 
 const Signup = (props: Props) => {
   const [signupForm, setSignupForm] = useState({
-    email : "",
-    password : "",
-    confirmPassword : ""
+    email : '',
+    password : '',
+    confirmPassword : ''
   })
-  const [error, setError] = useState("Password Don't Match")
-  
+  const setAuthModalState = useSetRecoilState(AuthModalState)
+  const [error, setError] = useState("")
   const [
     createUserWithEmailAndPassword,
     user,
     loading,
     userError,
   ] = useCreateUserWithEmailAndPassword(auth);
-
-  const Onchange = (event : React.ChangeEvent<HTMLInputElement>) => {
-    setSignupForm((prev)  => ({
-      ...prev,
-      [event.target.name] : event.target.value
-    }))
+  const changeHandler = (e : React.ChangeEvent<HTMLInputElement>) => {
+      setSignupForm((prev) => ({
+        ...prev,
+        [e.target.name] : e.target.value
+      }))
   }
 
-  const submitHandler = (event : React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    if(error) setError("")
+  const SubmitHandler = (e : React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setError("")
     if(signupForm.password !== signupForm.confirmPassword){
       setError("Password Don't Match")
       return;
     }
-    
+   
     createUserWithEmailAndPassword(signupForm.email, signupForm.password)
-    
+    setAuthModalState((prev) => ({
+      ...prev,
+      open : false
+    }))
   }
+
   return (
-    <form className="flex-grow w-full" onSubmit={submitHandler}>
-      
-  <div className="mb-6">
-    <label
-      htmlFor="email"
-      className="block mb-2 text-sm font-medium text-gray-900 dark:text-red-white"
-    >
-      Email address
-    </label>
-    <input
-    onChange={Onchange}
+    <form className="flex flex-col gap-4" onSubmit={SubmitHandler}>
+  <div>
+    <div className="mb-2 block">
+      <Label
+        htmlFor="email1"
+        value="Your email"
+      />
+    </div>
+    <TextInput
+      id="email1"
       type="email"
       name='email'
-      id="email"
-      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 flex-grow"
-      placeholder="john.doe@company.com"
-      required
+      placeholder="name@yourmail.com"
+      required={true}
+      onChange={changeHandler}
+      
     />
   </div>
-  <div className="mb-6">
-    <label
-      htmlFor="password"
-      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-    >
-      Password
-    </label>
-    <input
-    onChange={Onchange}
-      type="password"
-      id="password"
-      name='password'
-      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-      placeholder="•••••••••"
-      required
-    />
-  </div>
-  <div className="mb-6">
-    <label
-      htmlFor="password2"
-      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-    >
-      Confirm Password
-    </label>
-    <input
-    onChange={Onchange}
-      type="password"
-      id="password2"
-      name='confirmPassword'
-      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-      placeholder="•••••••••"
-      required
-    />
-  </div>
-  {(error || userError )&& (<p className="text-red-500">{error || FIREBASE_ERRORS[userError?.message as keyof typeof FIREBASE_ERRORS]}</p>)}
-  <button
-    type="submit"
-    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-  >
-    {loading ?  <Spinner
-    color="purple"
-    aria-label="Purple spinner example"
-  /> : "Signup New Account"}
+  <div>
+    <div className="mb-2 block">
+      <Label
+        htmlFor="password1"
+        value="Your password"
+      />
+    </div>
+    <TextInput
     
-  </button>
+      id="password1"
+      type="password"
+      name='password'
+      required={true}
+      onChange={changeHandler}
+      
+          
+    />
+  </div>
+  <div>
+    <div className="mb-2 block">
+      <Label
+        htmlFor="password2"
+        value="Confirm password"
+      />
+    </div>
+    <TextInput
+    
+      id="password2"
+      type="password"
+      name='confirmPassword'
+      required={true}
+      onChange={changeHandler}
+      
+          
+    />
+  </div>
+  <div className="text-red-500">
+   {error || userError &&  <p>{error || FIREBASE_ERRORS[userError.message as keyof typeof FIREBASE_ERRORS]}</p>}
+  </div>
+  <Button type='submit' className=" !bg-[#ff4500]">
+   {loading ? <Spinner aria-label="Left-aligned spinner example" /> : "Create A New Account"}
+  </Button>
 </form>
   )
 }

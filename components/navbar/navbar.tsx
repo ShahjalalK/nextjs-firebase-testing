@@ -1,19 +1,23 @@
 import Image from 'next/image'
 import React from 'react'
-import SearchInput from './searchInput'
-import RightContent from './rightContent'
+import Search from './search'
+import RightContnet from './rightContnet'
 
 type Props = {}
 
 const Navbar = (props: Props) => {
   return (
-    <div className="flex flex-grow bg-white h-[44px] py-8 items-center">
-      <div className="flex flex-grow md:flex-grow-0 items-center mx-1 md:mx-6">
-        <Image src="/logo.png" alt="raddit" width={35} height={35} className="rounded-full" />
-        <h3 className="hidden md:inline-flex text-2xl font-black">Reddit</h3>
-      </div>
-      <SearchInput />
-      <RightContent />
+    <div className="flex items-center flex-grow py-1 w-full">        
+        <div className="flex items-center space-x-1 mx-2 md:mx-6 lg:mr-32">
+            <Image src="/logo.png" width={35} height={35} alt='reddit' className="rounded-full" />
+            <h4 className="hidden md:inline-flex text-2xl font-semibold">Reddit</h4>
+        </div>
+        <div className="flex-grow">
+            <Search />
+        </div>
+        <div className=" mx-1 md:mx-6 lg:ml-32 whitespace-nowrap">
+            <RightContnet />
+        </div>
     </div>
   )
 }
