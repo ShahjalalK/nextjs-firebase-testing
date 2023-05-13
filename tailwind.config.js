@@ -8,6 +8,9 @@ module.exports = {
     './components/navbar/rightContnet.tsx',
     './components/navbar/icons.tsx',
     './components/navbar/userMenu.tsx',
+    './components/navbar/directory/directory.tsx',
+    './components/navbar/directory/createComonityModal.tsx',
+    './components/navbar/directory/commonatyModal.tsx',
 
     './components/modal/authModal.tsx',
     './components/modal/login.tsx',
