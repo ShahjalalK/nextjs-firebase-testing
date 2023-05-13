@@ -32,7 +32,7 @@ const UserMenu = ({user}: Props) => {
          <div className="hidden md:inline-flex flex-col">
           <p className="font-medium text-sm">{user.displayName || user.email?.split("@")[0]}</p>
           <div className="flex items-center space-x-1">
-            <GiCloverSpiked />
+            <GiCloverSpiked className="text-[#ED001C]" />
           <p className="text-sm text-gray-400">1 Karma</p>
           </div>
          </div>
