@@ -13,14 +13,14 @@ const Navbar = (props: Props) => {
   const [user, loading, error] = useAuthState(auth);
 
   return (
-    <header className={`bg-white py-1 flex items-center ${user ? "space-x-6" : "space-x-3 md:space-x-32"} px-6 flex-grow w-full`}>
+    <header className={`bg-white py-1 flex items-center ${user ? "space-x-3 md:space-x-6" : "space-x-3 md:space-x-32"} px-1 md:px-6 flex-grow w-full fixed top-0 whitespace-nowrap`}>
         <div>
             <Logo />             
         </div>
         {user && <div>
           <HomeMenu />  
         </div>}
-        <div className="flex-grow">
+        <div className="flex-grow justify-center items-center">
             <SearchInput />
         </div>
         <div>

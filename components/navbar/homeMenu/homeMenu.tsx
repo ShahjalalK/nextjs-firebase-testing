@@ -17,7 +17,7 @@ const HomeMenu = (props: Props) => {
     <Dropdown label={
       <div className="flex items-center space-x-1 md:mr-32">
         <TiHome className="text-2xl" />
-       <span> Home</span>
+       <span className="hidden md:inline-flex"> Home</span>
       </div>
     }
     inline={true}

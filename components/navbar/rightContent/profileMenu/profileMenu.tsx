@@ -6,7 +6,7 @@ type Props = {}
 
 const ProfileMenu = (props: Props) => {
   return (
-    <div className="flex items-center space-x-6 flex-grow">
+    <div className="flex items-center space-x-2 md:space-x-6 flex-grow">
       <Icon />
       <UserMenu />
     </div>

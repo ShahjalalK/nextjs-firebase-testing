@@ -15,8 +15,8 @@ const UserMenu = (props: Props) => {
     <div>
         <Dropdown label={
             <div className="flex items-center space-x-2">
-                 <Avatar size="sm" className="filter grayscale" img="/logo.png" />
-                 <div className="text-sm">
+                 <Avatar size="sm" className="filter grayscale w-7 md:w-8 object-contain scale-95 md:scale-100" img="/logo.png" />
+                 <div className="hidden md:block text-sm">
                     <p className="font-medium">{user?.displayName || user?.email?.split("@")[0]}</p>
                     <p className="text-gray-400 flex items-center font-medium"> <GiCloverSpiked className="text-reddit-red mr-1" /> 1 karma</p>
 

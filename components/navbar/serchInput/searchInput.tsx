@@ -5,6 +5,7 @@ type Props = {}
 
 const SearchInput = (props: Props) => {
     const [searchText, setSearchText] = useState("")
+  
    
   return (
     <div className="relative">

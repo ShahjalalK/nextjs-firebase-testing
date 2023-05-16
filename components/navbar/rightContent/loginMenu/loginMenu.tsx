@@ -16,8 +16,8 @@ const LoginMenu = (props: Props) => {
     }))
   }
   return (
-    <div className="flex items-center space-x-6">
-      <button type="button" onClick={modalHandler} className="text-white bg-reddit-orangered hover:bg-reddit-orange focus:ring-4 focus:ring-red-300 font-medium rounded-full px-8 py-1 text-base  dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800">Log In</button>
+    <div className="flex items-center space-x-3  md:space-x-6">
+      <button type="button" onClick={modalHandler} className="text-white bg-reddit-orangered hover:bg-reddit-orange focus:ring-4 focus:ring-red-300 font-medium rounded-full px-8 py-1 text-base  dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800 hidden md:inline-flex">Log In</button>
       <Dropdown
   label={
     <Avatar size="sm" />
