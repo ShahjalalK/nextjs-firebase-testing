@@ -1,29 +1,32 @@
-import Image from 'next/image'
 import React from 'react'
-import Search from './search'
-import RightContnet from './rightContnet'
-import Directory from './directory/directory'
+import Logo from './logo/logo'
+import HomeMenu from './homeMenu/homeMenu'
 
-import { useAuthState } from 'react-firebase-hooks/auth';
+import RightContent from './rightContent/rightContent'
+import SearchInput from './serchInput/searchInput'
+import { useAuthState } from 'react-firebase-hooks/auth'
 import { auth } from '@/firebase/firebaseConfig'
-
 
 type Props = {}
 
 const Navbar = (props: Props) => {
   const [user, loading, error] = useAuthState(auth);
+
   return (
-    <div className="flex items-center flex-grow py-1  fixed w-full bg-white">        
-        <div className="flex items-center space-x-1 mx-2 md:mx-6">
-            <Image src="/logo.png" width={35} height={35} alt='reddit' className="rounded-full" />
-            <h4 className="hidden md:inline-flex text-2xl font-semibold">Reddit</h4>
+    <header className={`bg-white py-1 flex items-center ${user ? "space-x-6" : "space-x-3 md:space-x-32"} px-6 flex-grow w-full`}>
+        <div>
+            <Logo />             
         </div>
-        {user && <Directory />}
-        <Search />
-        <div className=" mx-1 md:mx-6 whitespace-nowrap">
-            <RightContnet />
+        {user && <div>
+          <HomeMenu />  
+        </div>}
+        <div className="flex-grow">
+            <SearchInput />
         </div>
-    </div>
+        <div>
+            <RightContent />
+        </div>
+    </header>
   )
 }
 

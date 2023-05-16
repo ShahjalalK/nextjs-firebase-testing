@@ -1,8 +1,6 @@
-export const FIREBASE_ERRORS = {
-    "Firebase: Error (auth/wrong-password)." : "Invalide email or password",
-    "Firebase: Error (auth/user-not-found)." : "This user not found",
-    "Firebase: Error (auth/email-already-in-use)." : "A user with that email already exists",
-    "Firebase: Password should be at least 6 characters (auth/weak-password)." : "Password should be at least 6 characters",
-    "Firebase: Error (auth/popup-closed-by-user)." : "A user with that email already exists"
-    
+export const FIREBASEERRORS = {
+    "Firebase: Error (auth/email-already-in-use)." : "This user already exists" ,
+    "Firebase: Error (auth/invalid-email)."  : "Invalid email or passowrd",
+    "Firebase: Error (auth/wrong-password)." : "Invalid email or passowrd",
+    "Firebase: Password should be at least 6 characters (auth/weak-password)." : "Password should be at least 6 characters"
 }

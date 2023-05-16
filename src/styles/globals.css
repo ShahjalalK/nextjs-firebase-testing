@@ -12,9 +12,7 @@
 
 }
 
-a{
-    @apply text-[#646cff] font-medium hover:text-[#535bf2]
-}
+
 
 body{
     @apply bg-[#DAE0E6]
