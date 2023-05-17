@@ -14,6 +14,9 @@ module.exports = {
 
     './components/navbar/rightContent/loginMenu/loginMenu.tsx',
 
+    './components/community/notFound.tsx',
+    './components/community/header.tsx',
+
 
     './components/navbar/homeMenu/homeMenu.tsx',
     './components/navbar/homeMenu/community/communitiModal.tsx',

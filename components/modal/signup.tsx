@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import HeaderModal from "./headerModal";
 import AuthButton from "./authButton";
 import { BsFillEyeFill } from "react-icons/bs";
@@ -8,10 +8,18 @@ import { Spinner } from "flowbite-react";
 import { useSetRecoilState } from "recoil";
 import { useAuthModalState } from "@/atoms/useAuthModalState";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
-import { auth } from "@/firebase/firebaseConfig";
+import { auth, fireStore } from "@/firebase/firebaseConfig";
 import { FIREBASEERRORS } from "@/firebase/errors";
+import { addDoc, collection } from "firebase/firestore";
 
 type Props = {};
+type User = {
+  displayName: string | null;
+  email: string | null;
+  photoURL: string | null;
+  uid: string;
+  phoneNumber: string | null;
+};
 
 const Signup = (props: Props) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -31,12 +39,8 @@ const Signup = (props: Props) => {
     }));
   };
 
-  const [
-    createUserWithEmailAndPassword,
-    user,
-    loading,
-    userError,
-  ] = useCreateUserWithEmailAndPassword(auth);
+  const [createUserWithEmailAndPassword, userCred, loading, userError] =
+    useCreateUserWithEmailAndPassword(auth);
 
   const SubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -44,14 +48,37 @@ const Signup = (props: Props) => {
       setError("Password Don't Match");
       return;
     }
-   const res = await createUserWithEmailAndPassword(signupForm.email, signupForm.password)
-   if(res){
+    const res = await createUserWithEmailAndPassword(
+      signupForm.email,
+      signupForm.password
+    );
+
+    if (res) {
       setModalState((prev) => ({
         ...prev,
-        open : false
-      }))
-   }
+        open: false,
+      }));
+    }
   };
+
+  const createUserDocument = async (user: User) => {
+    await addDoc(collection(fireStore, "users"), user);
+    console.log(user);
+  };
+
+  useEffect(() => {
+    if (userCred) {
+      createUserDocument({
+        displayName: userCred.user.displayName,
+        email: userCred.user.email,
+        photoURL: userCred.user.photoURL,
+        uid: userCred.user.uid,
+        phoneNumber: userCred.user.phoneNumber,
+      });
+    }
+  }, [userCred]);
+
+  console.log(userCred);
 
   return (
     <div className="p-5">
@@ -133,10 +160,18 @@ const Signup = (props: Props) => {
             />
           </div>
           <div className="text-red-600 text-sm">
-          {error || userError && <p>{error || FIREBASEERRORS[userError.message as keyof typeof FIREBASEERRORS]}</p>}
+            {error ||
+              (userError && (
+                <p>
+                  {error ||
+                    FIREBASEERRORS[
+                      userError.message as keyof typeof FIREBASEERRORS
+                    ]}
+                </p>
+              ))}
           </div>
-          
-          <div className="pt-5 w-full">           
+
+          <div className="pt-5 w-full">
             <button
               type="submit"
               className="text-white w-full bg-reddit-orangered hover:bg-reddit-orange focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"

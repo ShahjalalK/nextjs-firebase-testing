@@ -11,7 +11,14 @@ import {
   Radio,
   Checkbox,
 } from "flowbite-react";
-import { doc, getDoc, getDocs, serverTimestamp, setDoc } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  getDocs,
+  runTransaction,
+  serverTimestamp,
+  setDoc,
+} from "firebase/firestore";
 import { auth, fireStore } from "@/firebase/firebaseConfig";
 import { useAuthState } from "react-firebase-hooks/auth";
 
@@ -25,21 +32,26 @@ const CreateCommunity = ({ modal, modalHandler }: Props) => {
   const [communityName, setCommunityName] = useState("");
   const [communityNumber, setCommunityNumber] = useState(21);
   const [error, setError] = useState("");
-  const [communityType, setCommunityType] = useState("public")
-  const [adult, setAdult] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const [communityType, setCommunityType] = useState("public");
+  const [adult, setAdult] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const ChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value.length > 21) return;
+    if (e.target.value.length > 21) return;   
     setCommunityName(e.target.value);
     setCommunityNumber(21 - e.target.value.length);
   };
 
-  const onCommunityTypeChange = (e : React.ChangeEvent<HTMLInputElement>) => {
-    setCommunityType(e.target.name)
-  }
+ 
 
-   const SubmitHandler = async () => {
+  const onCommunityTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCommunityType(e.target.name);
+  };
+
+  
+ 
+
+  const SubmitHandler = async () => {    
     const format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
     if (format.test(communityName) || communityName.length < 3) {
       setError(
@@ -47,26 +59,38 @@ const CreateCommunity = ({ modal, modalHandler }: Props) => {
       );
       return;
     }
+
+    setLoading(true);
+
     try {
-      const communityDocRef = doc(fireStore, "communities", communityName)
-      const communityDoc =  await getDoc(communityDocRef)
-      if(communityDoc.exists()){
-        throw new Error(`Sorry, r/${communityName} is taken, Try another`)
-        return
-      }
+      const communityDocRef = doc(fireStore, "communities", communityName);
 
-      setLoading(true)
-      await setDoc(communityDocRef, {
-        creatorId : user?.uid,
-        createAtDate : serverTimestamp(),
-        numberOfMembers : 1,
-        privacyType : communityType,
-        adult
+      await runTransaction(fireStore, async (transection) => {
+        const communityDoc = await transection.get(communityDocRef);
+        if (communityDoc.exists()) {
+          throw new Error(`Sorry, r/${communityName} is taken, Try another`);
+          return;
+        }
 
-      })
-      setLoading(false)
-    } catch (error : any) {
-      setError(error.message)
+        await transection.set(communityDocRef, {
+          creatorId: user?.uid,
+          createAtDate: serverTimestamp(),
+          numberOfMembers: 1,
+          privacyType: communityType,
+          adult,
+        });
+
+       await transection.set(doc(fireStore, `users/${user?.uid}/communitySnippets`, communityName), {
+          communityId : communityName,
+          isModerator : true
+        })
+      });
+
+     
+     
+      setLoading(false);
+    } catch (error: any) {
+      setError(error.message);
     }
   };
 
@@ -88,17 +112,21 @@ const CreateCommunity = ({ modal, modalHandler }: Props) => {
               </div>
               <input
                 type="text"
-                id="email-address-icon"
+               
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-900 focus:border-gray-900 block w-full pl-7 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 onChange={ChangeHandler}
                 value={communityName}
               />
             </div>
-            <p className={`${communityName.length ==21 ? "text-red-600" : "text-gray-600"} text-sm`}>
+            <p
+              className={`${
+                communityName.length == 21 ? "text-red-600" : "text-gray-600"
+              } text-sm`}
+            >
               {communityNumber} Characters remaining
             </p>
             {error && <p className="text-red-600 text-sm">{error}</p>}
-          </div> 
+          </div>
 
           <div>
             <h2 className="text-lg font-medium mb-2">Community type</h2>
@@ -120,7 +148,13 @@ const CreateCommunity = ({ modal, modalHandler }: Props) => {
                 </p>
               </div>
               <div className="flex items-center gap-2">
-                <Radio id="restricted" name="restricted" value="Restricted" checked={communityType === "restricted"} onChange={onCommunityTypeChange} />
+                <Radio
+                  id="restricted"
+                  name="restricted"
+                  value="Restricted"
+                  checked={communityType === "restricted"}
+                  onChange={onCommunityTypeChange}
+                />
                 <Label htmlFor="restricted" className="flex items-center">
                   <VscEye className="text-gray-500 mr-2 text-xl" />
                   Restricted
@@ -130,7 +164,13 @@ const CreateCommunity = ({ modal, modalHandler }: Props) => {
                 </p>
               </div>
               <div className="flex items-center gap-2">
-                <Radio id="private" name="private" value="Private" checked={communityType === "private"} onChange={onCommunityTypeChange} />
+                <Radio
+                  id="private"
+                  name="private"
+                  value="Private"
+                  checked={communityType === "private"}
+                  onChange={onCommunityTypeChange}
+                />
                 <Label htmlFor="private" className="flex items-center">
                   <HiLockClosed className="text-gray-500 mr-2 text-lg" />
                   Private
@@ -146,7 +186,14 @@ const CreateCommunity = ({ modal, modalHandler }: Props) => {
             <h2 className=" text-base font-normal mb-1">Adult content</h2>
             <div className="flex flex-col gap-4" id="checkbox">
               <div className="flex items-center gap-2">
-                <Checkbox id="accept" value="adult" checked={adult === true} onChange={(e : React.ChangeEvent<HTMLInputElement>) => setAdult(!adult)} />
+                <Checkbox
+                  id="accept"
+                  value="adult"
+                  checked={adult === true}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setAdult(!adult)
+                  }
+                />
                 <Label htmlFor="accept" className="flex items-center space-x-1">
                   <span className="px-1 bg-[#ff585b] text-white text-xs">
                     NSFW
@@ -173,7 +220,7 @@ const CreateCommunity = ({ modal, modalHandler }: Props) => {
             type="button"
             className="text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
           >
-           {loading ? <Spinner /> : " Create Community"}
+            {loading ? <Spinner /> : " Create Community"}
           </button>
         </div>
       </Modal.Footer>
