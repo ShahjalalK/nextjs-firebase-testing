@@ -2,18 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-:root{
-    color-scheme: light dark;
-    color: #212121;
-    background-color: rgba(255, 255, 255, 0.87s);
-    font-synthesis: none;
-    text-rendering: optimizeLegibility;
-    -webkit-text-size-adjust: 100%; 
-
-}
-
-
-
 body{
     @apply bg-[#DAE0E6]
+}
+
+@layer components{
+   .gridColomon{
+    @apply text-white
+   }
 }
